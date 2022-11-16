@@ -1,0 +1,202 @@
+							        Day-2
+
+                                                            ***Scope***
+1)
+var a = 12;
+(function() {
+  console.log(a);
+})();
+
+Since 'a' is declared globally and there is no locally declared 'a'to override global value of 'a',it will log 12 to the console.
+
+2)
+var a = 5;
+(function() {
+  var a = 12;
+  console.log(a);
+})();
+As in this code,we have a locally declared 'a' which will override the global one(precedence is more for local variable than global variables).So it will log 12 to the console.
+
+3)
+var a = 10;
+var x = (function() {
+  var a = 12;
+  return (function() {
+    console.log(a);
+  });
+})();
+x();
+
+The function that 'x'is pointing to(let's say outer function) returns another function when executed(let's say inner function).The inner function doesn't have 'a' as local varialble,so it will look for 'a'in the parent scope,there it finds a=12.
+
+So to sum up,x is now the pointer to inner function,so when x is called the inner function get's executed,thus printing 12 on the console.
+
+4)
+var a = 10;
+var x = (function() {    //outer
+  var y = function() {   //inner1
+    var a = 12;
+  };
+  return function() {	  //inner2
+    console.log(a);
+  }
+})();
+x();
+
+If we observe,the function that 'x' is pointing to (outer)has
+==>A pointer 'y' to a function(inner1) which has a local variable and returns nothing(NOTE:scope of this variable 'a' is upto this function only).
+==>The return value.It returns a function(inner2)
+To sum up,
+var x=inner2;
+with x(),we are calling inner2,so when it get's executed,it looks for 'a' in parent scope(but the parent is outer which doesn't have 'a'declared).So thus global value is considered.
+OUTPUT:10
+
+5)
+
+var a = 10;
+var x = (function() {  //outer
+  (function() {	//inner1
+    a = 12; // <<< look carefully at this line.
+  })();
+  return (function() {
+    console.log(a);		//inner2
+  });
+})();
+x();
+
+In inner1,'a' is not redeclared,instead a new value is assigned to 'a',and now a=10 is no longer true.
+After executing inner1,the outer function will return inner .
+Thus,var x=inner2.
+So now when 'x' get's executed,the updated value of 'a',i.e.,12 will be printed on the console.
+
+
+6)
+var a = 10;
+(function() {  //outer
+  var a = 15;
+  window.x = function() {  //inner
+    console.log(a);
+  }
+})();
+x();
+
+
+Window here is a global object.
+When outer function executes,it has a loacl varaible and inner function will be assinged as a property to the object 'window'.
+As this inner function doesn't have a locally declared 'a',it looks for 'a' in its immediate parent's scope.And it find's it as 15.So thus 15 is printed to the console,when 'x' get's executed.
+
+
+
+
+
+
+
+                                                        ***Arrays***
+
+1. Is array passed by value or reference to a function. Justify your answer with an example.
+Ans:Array is passed by reference to functions.(The pointer (or) the reference of array is sent to function,so any changes to array in the function will remain even after the execution of function.
+
+	Example:
+		var a = ['a','b','c'];
+		var f=function(arr){
+  		  arr.push('ddd');
+		}
+		f(a);
+		console.log(a);
+	Output:[ 'a', 'b', 'c', 'ddd' ]
+The actual array is getting modified,so it is sure that array is being passed by reference.
+
+
+
+2. Write a Javascript function to clone an array without using loops.
+To clone an array we can directly use splice function  in javascript.
+	var a = ['a','b','c'];
+	var f=a.slice(0);
+	console.log(f);
+
+
+
+3. Breifly explain the below Array methods with examples
+shift, unshit, slice, splice, pop
+
+===>Shift:Removes 1st element of array and shifts every other element in the array to it's left by one position.
+	var a = ['a','b','c'];
+	var f=a.shift();
+	console.log(a);
+  Output:[ 'b', 'c' ]
+  
+===> Unshift:Adds elements to the beginning of the array.
+  	var a = ['a','b','c'];
+	var f=a.unshift('d');
+	console.log(a);
+  Output:[ 'd', 'a', 'b', 'c' ]
+  
+===>Slice:It returns a new array of specified elements.Does not change the original array.
+	var a = ['a','b','c'];
+	var f=a.slice(1,3);
+	console.log(f);  //notice we are not printing original array,original array remains same.
+  Output:[ 'b', 'c' ]
+  parameters: we need to provide 2indexes.The 1st index is included and the 2nd one is included.
+  slice(start,end)===>[start,end).
+  
+===>splice:It adds/removes elements.Makes changes to orignal array.
+  	const fruits = ["Banana", "Orange", "Apple", "Mango", "Kiwi"];
+	fruits.splice(2, 2,"am","am2");
+  Output:[ 'Banana', 'Orange', 'am', 'am2', 'Kiwi' ]
+  splice(par1,par2,...)
+  par1->position from where you need to add or remove elements.
+  par2->count of elements that are to be removed from specified position(par1)
+  The rest parameters are the elements that are to be added to the array.
+ 
+ ===>Pop:Removes last element from the array.
+	var a = ['a','b','c'];
+	var f=a.pop();
+	console.log(a);
+  Output:[ 'a', 'b' ]
+  
+  
+  
+  
+  						***Loops***
+  						
+1. Using a for loop output the elements in reverse order [1,2,3,4,5]
+var a = [1,2,3,4,5];
+for(let i=a.length;i>=0;i--)
+console.log(a[i]);
+
+2. Whats the difference between for .. of and for .. in
+for..in,iterates over the keys,whereas for..of iterates over the values of the keys.
+
+
+
+
+
+						***Iterators***
+1. Use map function to return the squares of the items in the below array [2, 4, 6, 8, 10].
+	var a = [2, 4, 6, 8, 10];
+	var ans=a.map(x=>
+	{
+    		return x*x;
+	});
+	console.log(ans);
+
+2. Use filter function array to extract strings from the below array  [1, ""two"", 3, ""four"", 5, ""Six"", 7, ""Eight"", 9, ""Ten""].
+	var a = [1, "two", 3, "four", 5, "Six", 7, "Eight", 9, "Ten"];
+	var ans=a.filter(x=>
+	{
+    		return (typeof x==='string');
+	});
+	console.log(ans);
+
+3. What are arguments of the reduce function. Use reduce function to return the sum of the items in the array [1, 3, 5, 7, 9].
+ Accumulator and currentValue are the 2 arguments of reduce function.Reduce function returns single element by adding all elements of the array.
+ 
+ 	var a = [1, 3, 5, 7, 9];
+	var ans=a.reduce((accumulator,currentValue)=>
+	{
+    		return accumulator+currentValue;
+	});
+	console.log(ans);
+ 
+  
+    
